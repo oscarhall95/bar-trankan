@@ -126,30 +126,6 @@
       `).join('');
     }
 
-  function randomDrink() {
-      const d = drinks[Math.floor(Math.random() * drinks.length)];
-      const popup = window.open("", "_blank", "width=400,height=500");
-      popup.document.write(`
-        <html lang='sv'>
-        <head>
-          <title>${d.name}</title>
-          <style>
-            body { font-family: 'Playfair Display', serif; background-color: #0e0e0e; color: #f2f2f2; text-align: center; margin: 0; padding: 1rem; }
-            img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; }
-            h2 { color: #d4af37; margin: 1rem 0 0.5rem; }
-            ul { list-style: none; padding: 0; }
-            li::before { content: "• "; color: #d4af37; }
-          </style>
-        </head>
-        <body>
-          <h2>${d.name}</h2>
-          <img src='${d.img}?auto=format&fit=crop&w=400&q=80' alt='${d.name}'/>
-          <h3>Ingredienser</h3>
-          <ul>${d.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
-        </body>
-        </html>
-      `);
-    }
   </script>
 </body>
 </html>
