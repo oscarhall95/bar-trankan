@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bar Trånkan 🍸</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+      background-color: #0e0e0e;
+      color: #f2f2f2;
+    }
+    main {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    h1 {
+      color: #d4af37;
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      font-weight: 300;
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
+    button {
+      background: #d4af37;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.8rem 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #000;
+      transition: transform 0.2s;
+    }
+    button:hover { transform: scale(1.05); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 2rem auto;
+    }
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 1rem;
+      overflow: hidden;
+      padding-bottom: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .card h3 {
+      color: #d4af37;
+      margin-top: 0.7rem;
+      font-size: 1.3rem;
+    }
+    .card ul {
+      text-align: left;
+      list-style: none;
+      padding: 0 1rem;
+      margin: 0.5rem 0 0;
+      font-size: 0.9rem;
+    }
+    .card ul li::before {
+      content: "• ";
+      color: #d4af37;
+    }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>BAR TRÅNKAN</h1>
+    <h2>En elegant cocktailupplevelse</h2>
+
+    <button onclick="randomDrink()">🔀 Slumpa en drink</button>
+
+    <div class="grid" id="drinks"></div>
+
+    <footer>© 2025 Bar Trånkan</footer>
+  </main>
+
+  <script>
+    const drinks = [
+      {name:"South Side",img:"https://images.unsplash.com/photo-1617814076367-5d1f9cfb66f4",ingredients:["Gin","Limejuice","Sockerlag","Mynta"]},
+      {name:"Amaretto Sour",img:"https://images.unsplash.com/photo-1617196039934-5f6d8b7d0d7b",ingredients:["Amaretto","Citronjuice","Sockerlag","Äggvita"]},
+      {name:"Whisky Sour",img:"https://images.unsplash.com/photo-1578674472882-74cd602b64d4",ingredients:["Whiskey","Citronjuice","Sockerlag","Äggvita"]},
+      {name:"Clover Club",img:"https://images.unsplash.com/photo-1617814076269-96ab9f386e9d",ingredients:["Gin","Hallon","Citronjuice","Äggvita"]},
+      {name:"Strawberry Daiquiri",img:"https://images.unsplash.com/photo-1551024601-bec78aea704b",ingredients:["Rom","Jordgubbar","Limejuice","Sockerlag"]},
+      {name:"Negroni",img:"https://images.unsplash.com/photo-1546619638-1b6a4e1d8b3f",ingredients:["Gin","Campari","Söt vermouth"]},
+      {name:"Old Fashioned",img:"https://images.unsplash.com/photo-1556761175-129418cb2dfe",ingredients:["Whiskey","Sockerlag","Angostura bitters","Apelsinskal"]},
+      {name:"Mojito",img:"https://images.unsplash.com/photo-1544025162-d76694265947",ingredients:["Ljus rom","Lime","Mynta","Sockerlag","Sodavatten"]},
+      {name:"Gin och Tonic",img:"https://images.unsplash.com/photo-1582719478181-5b6d0b6d3b3a",ingredients:["Gin","Tonic Water"]},
+      {name:"Enzoni",img:"https://images.unsplash.com/photo-1590080875839-23a637b1b6fd",ingredients:["Gin","Citronjuice","Sockerlag","Cointreau"]},
+      {name:"Tom Collins",img:"https://images.unsplash.com/photo-1582456891925-7c74c0e1b019",ingredients:["Gin","Citronjuice","Sockerlag","Sodavatten"]},
+      {name:"Margarita",img:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c",ingredients:["Tequila","Cointreau","Limejuice","Salt till glasets kant"]},
+      {name:"Caipirinha",img:"https://images.unsplash.com/photo-1561079795-1b0a0c6e9fbb",ingredients:["Cachaça","Lime","Socker"]},
+      {name:"Bees Knees",img:"https://images.unsplash.com/photo-1617814076590-2f7e7d72a0c4",ingredients:["Gin","Citronjuice","Honung"]},
+      {name:"Manhattan",img:"https://images.unsplash.com/photo-1578683010236-d716f9a3f461",ingredients:["Whiskey","Söt vermouth","Angostura bitters"]},
+      {name:"Likör 43 Sour",img:"https://images.unsplash.com/photo-1617196039934-5f6d8b7d0d7b",ingredients:["Likör 43","Citronjuice","Sockerlag","Äggvita"]},
+      {name:"Vodka Sour",img:"https://images.unsplash.com/photo-1576765607924-4a1de20e3c49",ingredients:["Vodka","Citronjuice","Sockerlag","Äggvita"]},
+      {name:"Cosmopolitan",img:"https://images.unsplash.com/photo-1551022378-35d3b15f39b9",ingredients:["Vodka","Cointreau","Tranbärsjuice","Limejuice"]},
+      {name:"Piña Colada",img:"https://images.unsplash.com/photo-1505576391880-8e7f8a7f7d7b",ingredients:["Rom","Ananasjuice","Kokosgrädde","Is"]}
+    ];
+
+    const grid = document.getElementById('drinks');
+
+    function render() {
+      grid.innerHTML = drinks.map(d => `
+        <div class='card'>
+          <img src='${d.img}?auto=format&fit=crop&w=600&q=80' alt='${d.name}'>
+          <h3>${d.name}</h3>
+          <ul>${d.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+        </div>
+      `).join('');
+    }
+
+    function randomDrink() {
+      const d = drinks[Math.floor(Math.random() * drinks.length)];
+      alert(`🍸 ${d.name}\\n\\nIngredienser:\\n${d.ingredients.join(', ')}`);
+    }
+
+    render();
+  </script>
+</body>
+</html>
