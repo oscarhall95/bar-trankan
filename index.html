@@ -111,6 +111,7 @@
       {name:"Likör 43 Sour",img:"https://drinkoteket.se/wp-content/uploads/43-sour-860x860.jpg",ingredients:["Likör 43","Citronjuice","Sockerlag","Äggvita"]},
       {name:"Vodka Sour",img:"https://justdrinks.se/wp-content/uploads/2025/06/vodka-sour-citron-syrlig-drink.webp",ingredients:["Vodka","Citronjuice","Sockerlag","Äggvita"]},
       {name:"Cosmopolitan",img:"https://images.unsplash.com/photo-1617524124781-38a0e1d71ba6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1172",ingredients:["Vodka","Cointreau","Tranbärsjuice","Limejuice"]},
+      {name:"Piña Colada",img:"https://plus.unsplash.com/premium_photo-1720446085662-6c337f997326?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=688",ingredients:["Rom","Ananasjuice","Kokosgrädde","Is"]}
       {name:"Piña Colada",img:"https://drinkoteket.se/wp-content/uploads/pina-colada-1-860x860.jpg",ingredients:["Rom","Ananasjuice","Kokosgrädde","Is"]}
     ];
 
@@ -126,6 +127,12 @@
       `).join('');
     }
 
+    function randomDrink() {
+      const d = drinks[Math.floor(Math.random() * drinks.length)];
+      alert(`🍸 ${d.name}\\n\\nIngredienser:\\n${d.ingredients.join(', ')}`);
+    }
+
+    render();
   </script>
 </body>
 </html>
