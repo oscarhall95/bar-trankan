@@ -30,13 +30,13 @@
   .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;box-shadow:0 10px 26px rgba(0,0,0,.25)}
   .card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.35);border-color:#3a3f48}
   .thumb {
-  width: 100%;
-  height: 170px;          /* lite lägre så bilden får mer luft */
-  object-fit: contain;    /* ändrat från cover till contain = zoomar ut */
-  background: #0b0c0f;
-  padding: 6px;           /* lite “ram” så glasen inte klipps */
-  border-radius: 10px;
-}
+    width: 100%;
+    height: 170px;
+    object-fit: contain;
+    background: #0b0c0f;
+    padding: 6px;
+    border-radius: 10px;
+  }
   .content{padding:12px 14px 16px}
   .name{margin:8px 0 6px;font-weight:700;letter-spacing:.02em}
   .ing{margin:0;color:#d7d9dd;font-size:14px;line-height:1.45}
@@ -44,6 +44,52 @@
   footer{margin:40px 0 24px;text-align:center;color:var(--muted);font-size:12px}
   .to-top{position:fixed;right:18px;bottom:18px;width:48px;height:48px;border-radius:999px;border:1px solid #3a3f48;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#232732,#1b1e26);color:#fff;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:60}
   .to-top.show{opacity:1;pointer-events:auto}.to-top:hover{transform:translateY(-2px)}.to-top svg{width:20px;height:20px}
+
+  /* 🎲 Popup */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+    z-index: 999;
+  }
+  .modal.show { opacity: 1; pointer-events: auto; }
+  .modal-content {
+    background: var(--card);
+    border-radius: 18px;
+    max-width: 380px;
+    width: 90%;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    animation: popin .3s ease;
+  }
+  @keyframes popin { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-content img {
+    width: 100%;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    object-fit: contain;
+  }
+  .modal-content h2 { color: var(--gold); margin-bottom: 6px; font-family: "Playfair Display", serif; }
+  .modal-content p { color: var(--text); font-size: 14px; line-height: 1.5; }
+  .close-btn {
+    margin-top: 14px;
+    border: none;
+    background: var(--gold);
+    color: #111;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .2s ease;
+  }
+  .close-btn:hover { background: #f2d673; }
 </style>
 </head>
 <body>
@@ -57,6 +103,10 @@
         </button>
         <div class="dd-menu" role="listbox" aria-labelledby="ddBtn"></div>
       </div>
+
+      <!-- 🎲 SLUMPA EN DRINK KNAPP -->
+      <button class="btn" id="randomBtn">🎲 Slumpa en drink</button>
+
       <div class="count" id="count"></div>
     </div>
   </header>
@@ -66,17 +116,18 @@
     <footer>© 2025 Bar Trånkan</footer>
   </div>
 
+  <!-- 🆕 Popup-element -->
+  <div class="modal" id="randomModal">
+    <div class="modal-content" id="randomContent"></div>
+  </div>
+
   <button class="to-top" id="toTop" aria-label="Till toppen" title="Till toppen">
     <svg viewBox="0 0 24 24" fill="none"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 
 <script>
-  // Kategorier
   const CATS = ["Alla","Gin","Rom","Whiskey","Vodka","Tequila","Övriga"];
-
-  // Drinkdata med filnamn i repo-roten (main)
   const DRINKS = [
-    // Gin
     {name:"South Side",cat:"Gin",img:"south_side.png",ing:["Gin","Limejuice","Sockerlag","Mynta"]},
     {name:"Clover Club",cat:"Gin",img:"clover_club.png",ing:["Gin","Hallon","Citronjuice","Äggvita"]},
     {name:"Negroni",cat:"Gin",img:"negroni.png",ing:["Gin","Campari","Söt vermouth"]},
@@ -84,32 +135,22 @@
     {name:"Tom Collins",cat:"Gin",img:"tom_collins.png",ing:["Gin","Citronjuice","Sockerlag","Sodavatten"]},
     {name:"Enzoni",cat:"Gin",img:"enzoni.png",ing:["Gin","Campari","Citronjuice","Sockerlag","Cointreau"]},
     {name:"Bees Knees",cat:"Gin",img:"bees_knees.png",ing:["Gin","Citronjuice","Honung"]},
-
-    // Rom
     {name:"Mojito",cat:"Rom",img:"mojito.png",ing:["Ljus rom","Lime","Mynta","Sockerlag","Sodavatten"]},
     {name:"Piña Colada",cat:"Rom",img:"pina_colada.png",ing:["Rom","Ananasjuice","Kokosgrädde","Is"]},
     {name:"Strawberry Daiquiri",cat:"Rom",img:"strawberry_daiquiri.png",ing:["Rom","Jordgubbar","Limejuice","Sockerlag"]},
-    {name:"Dark and Stormy",cat:"Rom",img:"dark_&amp;_stormy.png",ing:["Mörk rom","Limejuice","Ginger beer"]},
+    {name:"Dark and Stormy",cat:"Rom",img:"dark_&_stormy.png",ing:["Mörk rom","Limejuice","Ginger beer"]},
     {name:"Blue Ocean",cat:"Rom",img:"blue_ocean.png",ing:["Ljus rom","Blå Curaçao","Citronjuice","Sprite"]},
     {name:"Jamaican Lemonade",cat:"Rom",img:"jamaican_lemonade.png",ing:["Mörk rom","Cointreau","Citronjuice","Sprite"]},
-
-    // Whiskey
     {name:"Whiskey Sour",cat:"Whiskey",img:"whiskey_sour.png",ing:["Whiskey","Citronjuice","Sockerlag","Äggvita"]},
     {name:"Old Fashioned",cat:"Whiskey",img:"old_fashioned.png",ing:["Whiskey","Sockerlag","Angostura bitters","Apelsinskal"]},
     {name:"Manhattan",cat:"Whiskey",img:"manhattan.png",ing:["Whiskey","Söt vermouth","Angostura bitters"]},
     {name:"Godfather",cat:"Whiskey",img:"godfather.png",ing:["Whiskey","Amaretto"]},
-
-    // Vodka
     {name:"Vodka Sour",cat:"Vodka",img:"vodka_sour.png",ing:["Vodka","Citronjuice","Sockerlag","Äggvita"]},
     {name:"Cosmopolitan",cat:"Vodka",img:"cosmopolitan.png",ing:["Vodka","Cointreau","Tranbärsjuice","Limejuice"]},
     {name:"Kamikaze",cat:"Vodka",img:"kamikaze.png",ing:["Vodka","Cointreau","Limejuice"]},
-
-    // Tequila
     {name:"Margarita",cat:"Tequila",img:"margarita.png",ing:["Tequila","Cointreau","Limejuice","Salt till glasets kant"]},
     {name:"Paloma",cat:"Tequila",img:"paloma.png",ing:["Tequila","Grapefruktsoda","Limejuice"]},
     {name:"Tequila Sunrise",cat:"Tequila",img:"tequila_sunrise.png",ing:["Tequila","Grenadin","Apelsinjuice"]},
-
-    // Övriga
     {name:"Amaretto Sour",cat:"Övriga",img:"amaretto_sour.png",ing:["Amaretto","Citronjuice","Sockerlag","Äggvita"]},
     {name:"Caipirinha",cat:"Övriga",img:"caipirinha.png",ing:["Cachaça","Lime","Socker"]},
     {name:"Likör 43 Sour",cat:"Övriga",img:"likor_43_sour.png",ing:["Likör 43","Citronjuice","Sockerlag","Äggvita"]}
@@ -121,13 +162,14 @@
   const ddBtn = document.getElementById("ddBtn");
   const ddMenu = dd.querySelector(".dd-menu");
   const toTop = document.getElementById("toTop");
+  const randomBtn = document.getElementById("randomBtn");
+  const modal = document.getElementById("randomModal");
+  const modalContent = document.getElementById("randomContent");
   let current = "Alla";
 
-  // Bygg dropdown-menyn
-  ddMenu.innerHTML = ["Alla","Gin","Rom","Whiskey","Vodka","Tequila","Övriga"]
-    .map(cat => `<div class="dd-item" role="option" data-cat="${cat}"><span class="dot"></span><span>${cat}</span></div>`).join("");
+  // Dropdown
+  ddMenu.innerHTML = CATS.map(cat => `<div class="dd-item" role="option" data-cat="${cat}"><span class="dot"></span><span>${cat}</span></div>`).join("");
 
-  // Renderkort
   function render(){
     const items = current==="Alla" ? DRINKS : DRINKS.filter(d => d.cat===current);
     grid.innerHTML = items.map(d => `
@@ -143,15 +185,27 @@
     countEl.textContent = `${items.length} av ${DRINKS.length} drinkar${current!=="Alla" ? ` • ${current}` : ""}`;
   }
 
-  // Dropdown logik
   function toggleDD(open){ const willOpen = open ?? dd.getAttribute("aria-expanded")!=="true"; dd.setAttribute("aria-expanded", String(willOpen)); ddBtn.setAttribute("aria-expanded", String(willOpen)); }
   ddBtn.addEventListener("click", e => { e.stopPropagation(); toggleDD(); });
   document.addEventListener("click", e => { if (!dd.contains(e.target)) toggleDD(false); });
   ddMenu.addEventListener("click", e => { const item = e.target.closest(".dd-item"); if(!item) return; current = item.dataset.cat; toggleDD(false); render(); });
 
-  // Till toppen
   window.addEventListener("scroll", () => { if (window.scrollY > 420) toTop.classList.add("show"); else toTop.classList.remove("show"); });
   toTop.addEventListener("click", () => window.scrollTo({top:0, behavior:"smooth"}));
+
+  // 🎲 Slumpa en drink
+  randomBtn.addEventListener("click", () => {
+    const rand = DRINKS[Math.floor(Math.random() * DRINKS.length)];
+    modalContent.innerHTML = `
+      <img src="${rand.img}" alt="${rand.name}">
+      <h2>${rand.name}</h2>
+      <p>${rand.ing.join(" • ")}</p>
+      <button class="close-btn" id="closeModal">Stäng</button>
+    `;
+    modal.classList.add("show");
+    document.getElementById("closeModal").addEventListener("click", () => modal.classList.remove("show"));
+    modal.addEventListener("click", e => { if(e.target === modal) modal.classList.remove("show"); });
+  });
 
   render();
 </script>
