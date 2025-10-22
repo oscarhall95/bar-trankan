@@ -70,12 +70,20 @@
     animation: popin .3s ease;
   }
   @keyframes popin { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .modal-content img {
-    width: 100%;
-    border-radius: 14px;
-    margin-bottom: 14px;
-    object-fit: contain;
-  }
+.modal-content img {
+  width: 100%;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  object-fit: contain;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.4),
+              0 0 60px rgba(212, 175, 55, 0.25);
+  transition: box-shadow 0.4s ease;
+}
+
+.modal-content img:hover {
+  box-shadow: 0 0 35px rgba(212, 175, 55, 0.6),
+              0 0 80px rgba(212, 175, 55, 0.35);
+}
   .modal-content h2 { color: var(--gold); margin-bottom: 6px; font-family: "Playfair Display", serif; }
   .modal-content p { color: var(--text); font-size: 14px; line-height: 1.5; }
   .close-btn {
